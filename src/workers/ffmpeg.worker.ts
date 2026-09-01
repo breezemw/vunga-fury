@@ -1,6 +1,6 @@
 import coreURL from '@ffmpeg/core?url'
 import wasmURL from '@ffmpeg/core/wasm?url'
-import classWorkerURL from '@ffmpeg/ffmpeg/worker?url'
+import classWorkerURL from './ffmpeg.class.worker?worker&url'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { FFMPEG_CORE_VERSION } from '../lib/ffmpeg/ffmpegConfig'
 import { buildLosslessRemuxCommand } from '../features/video-optimization/remuxer'
