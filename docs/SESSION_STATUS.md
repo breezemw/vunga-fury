@@ -166,6 +166,8 @@ git push origin main
 
 The public source repository is https://github.com/breezemw/vunga-fury. GitHub Pages is configured to deploy the static `gh-pages` branch at https://breezemw.github.io/vunga-fury/. The branch contains the production build made with `VITE_BASE_PATH=/vunga-fury/` and an `index.html`-based `404.html` SPA fallback. Custom domains are configured in the repository Pages settings after DNS is pointed at GitHub Pages.
 
+The public URL was opened and verified after GitHub Pages reported `built`. Its home and direct `/optimizer` SPA route rendered with correct base-prefixed assets and no cross-origin application resources. To add a custom domain, configure it in the repository Pages settings, create the DNS record GitHub specifies, wait for DNS verification, and then enable HTTPS in that same settings page.
+
 ## Final Architecture
 
 - Browser/React: React owns navigation, UI state, accessible controls, local file selection, and object URL lifecycle.
@@ -177,7 +179,7 @@ The public source repository is https://github.com/breezemw/vunga-fury. GitHub P
 ## Final Audit
 
 - The release is functionally verified in Chromium for the documented H.264/AAC MP4 lossless and Smart Conversion flows, including local output verification and download initiation.
-- The public GitHub Pages site is building from the `gh-pages` branch. Deployment status must be checked at the published URL before treating it as live.
+- The public GitHub Pages site is built from the `gh-pages` branch and was verified at its public URL.
 - This is not a 100% cross-device certification. The Not Completed and Known Limitations sections name every remaining validation gap.
 
 ## Blocked
