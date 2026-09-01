@@ -133,7 +133,7 @@
 - Full FFmpeg core initialization did not complete within the 110-second production-preview browser test budget. The initial FFmpeg worker loading response works under CSP, but full processing under deployment headers remains unverified.
 - Real fixture coverage is deliberately small (roughly 126 KB to 239 KB). 50 MB, 100 MB, 250 MB, 500 MB, and 1 GB processing remains unmeasured.
 - Real HEVC and MP3-audio fixtures were container-analyzed, but end-to-end FFmpeg processing is currently verified only for the H.264/AAC MP4 fixture.
-- Stage 16 platform-specific image processing, social dashboard, platform selectors, independent platform modules, multi-platform outputs, batch queue, custom video mode, and metadata-policy controls are not implemented. See `STAGE_16_AUDIT.md` for requirement-by-requirement completion criteria.
+- Stage 16 platform-specific image processing, multi-platform simultaneous outputs, batch queue, custom video mode, and metadata-policy controls are not implemented. A scoped video-only subset (platform selection, destination selection, local decision engine, reused lossless/Smart Conversion processing, `/social` route) was implemented and tested with a real fixture on the Instagram Reel path; see `STAGE_16_AUDIT.md` for requirement-by-requirement completion criteria.
 
 ## Not Completed
 
@@ -142,6 +142,9 @@
 - End-to-end HEVC and non-AAC audio processing: technically possible where the browser and FFmpeg core support the streams; requires running the existing fixtures through both profiles and inspecting playback/output metadata. Continue in another session.
 - Complete stream identity verification: technically possible only with a stream-level comparison strategy beyond metadata; matching metadata and output SHA-256 do not prove input/output frame identity. Define and test that strategy in another session.
 - Offline media processing: technically possible only after deliberate FFmpeg-core caching/storage testing. The current PWA intentionally avoids caching the large WASM core and all private media. Continue in another session.
+- Stage 16 image optimization, simultaneous multi-platform output, batch queue, custom video mode, and metadata policy controls: technically possible; requires a real image processing pipeline (not present) plus additional FFmpeg command work and tests. See `STAGE_16_AUDIT.md`.
+- Stage 16 Facebook/WhatsApp/TikTok real-fixture end-to-end runs: only Instagram Reel was run through the real FFmpeg engine in this session; the decision engine is shared and unit-tested but not independently E2E-verified per platform.
+- Stage 16 `/social` GitHub Pages deployment: implemented and locally tested, but not yet rebuilt/redeployed to the live `gh-pages` site as part of this session.
 
 ## Next Session
 

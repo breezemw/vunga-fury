@@ -6,6 +6,7 @@ test.describe('VUNGA FURY browser flows', () => {
       ['/', 'Optimize your video before uploading.'],
       ['/optimizer', 'Processing workspace'],
       ['/analyzer', 'Technical video inspection'],
+      ['/social', 'Prepare video for Instagram, Facebook, WhatsApp, and TikTok'],
       ['/settings', 'Application preferences'],
       ['/about', 'A private upload-preparation tool'],
     ] as const
@@ -91,6 +92,37 @@ test.describe('VUNGA FURY browser flows', () => {
       page.getByRole('button', { name: 'DOWNLOAD OPTIMIZED VIDEO' }).click(),
     ])
     expect(download.suggestedFilename()).toBe('h264-30fps_optimized.mp4')
+  })
+
+  test('prepares a real local video for Instagram Reel through the Social page', async ({
+    page,
+  }, testInfo) => {
+    test.skip(
+      testInfo.project.name !== 'chromium',
+      'FFmpeg core test runs once on desktop Chromium',
+    )
+    await page.goto('/')
+    await page
+      .locator('input[type="file"]')
+      .setInputFiles('tests/fixtures/generated/h264-30fps.mp4')
+    await expect(page.getByText('LOCAL VIDEO READY')).toBeVisible({ timeout: 30_000 })
+    await page.getByRole('link', { name: 'Social' }).click()
+    await page
+      .locator('section')
+      .filter({ hasText: 'INSTAGRAM' })
+      .getByRole('button', { name: 'SELECT' })
+      .click()
+    await page.getByRole('button', { name: 'Reel' }).click()
+    await page.getByRole('button', { name: 'PREPARE VIDEO ENGINE' }).click()
+    await expect(page.getByText('VIDEO ENGINE READY')).toBeVisible({ timeout: 110_000 })
+    await page.getByRole('button', { name: 'PREPARE FOR INSTAGRAM' }).click()
+    await expect(page.getByText('VIDEO STREAM PRESERVED')).toBeVisible({ timeout: 110_000 })
+    await expect(page.getByRole('button', { name: 'DOWNLOAD OPTIMIZED VIDEO' })).toBeEnabled()
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('button', { name: 'DOWNLOAD OPTIMIZED VIDEO' }).click(),
+    ])
+    expect(download.suggestedFilename()).toBe('h264-30fps_instagram.mp4')
   })
 
   test('persists local settings and clears them on request', async ({ page }) => {

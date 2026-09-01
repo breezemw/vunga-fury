@@ -1,32 +1,41 @@
 # Social Media Optimizer
 
-## Status
+Checked: 2026-09-02
 
-Not implemented. The current product is a local video optimizer with lossless-first and Smart Conversion profiles. It has no social-platform selector, image pipeline, multi-platform outputs, or batch queue.
+## What this is
 
-## Future Architecture
+`/social` lets a user prepare an already-selected local video for Instagram, Facebook, WhatsApp, or TikTok, reusing the same local, lossless-first FFmpeg engine used by the Optimizer page. It does not upload anything and does not add any new FFmpeg command paths.
 
-A future implementation should separate platform modules under `src/features/social-media/`:
+## Architecture
 
-- `common/` for typed platform profile contracts and safe decision logic
-- `instagram/`, `facebook/`, `whatsapp/`, and `tiktok/` for independently versioned rules and validators
+- `src/features/social-media/common/platformTypes.ts` — shared types: `SocialPlatformProfile`, `SocialDestinationProfile`, `UnknownOr<T>` (marks unverified spec fields), `getPlatformRealityStatement()`.
+- `src/features/social-media/common/socialOptimizer.ts` — the decision engine. `evaluateSocialVideo(metadata, destination)` classifies a video as `already-optimal`, `lossless-optimization`, `requires-conversion`, or `unsupported` using the same codec/container compatibility rules as the existing lossless optimizer. `createSocialVideoPlan(...)` turns a decision into an `OptimizationPlan` or `SmartConversionPlan` with a platform-suffixed output filename (e.g. `clip_instagram.mp4`).
+- `src/features/social-media/common/imageOptimizerStub.ts` — explicit "not implemented" result for image preparation, reused by every platform's `*ImageOptimizer.ts`.
+- `src/features/social-media/common/platformRegistry.ts` — maps each platform to a dynamic `import()` so only the selected platform's module is loaded.
+- `src/features/social-media/{instagram,facebook,whatsapp,tiktok}/` — one folder per platform, each with:
+  - `{Platform}Profile.ts` — typed destination data (real values marked `UNKNOWN` where no official source was verified; see `docs/SOCIAL_MEDIA_SPECS.md`).
+  - `{Platform}Rules.ts` — small platform-specific business rules (currently orientation guidance text).
+  - `{Platform}Validator.ts` — combines generic and platform-specific checks into errors/warnings for the selected destination.
+  - `{Platform}VideoOptimizer.ts` — the module actually lazy-loaded by the page; wires the profile into the shared `socialOptimizer.ts` functions.
+  - `{Platform}ImageOptimizer.ts` — stub, returns `{ supported: false }`.
+- `src/components/social/PlatformCard.tsx`, `src/components/social/SocialResultSummary.tsx` — UI reused only by `/social`.
+- `src/pages/SocialPage.tsx` — the page itself: platform cards → destination buttons → decision/plan display → reused `FfmpegEnginePanel` → process button that calls the existing `optimize()`/`convert()` from `useFfmpegEngineContext()` → reused `VerificationPanel` and a `SocialResultSummary` with a `DownloadButton`.
 
-Each profile must cite current official documentation, state the date checked, use `UNKNOWN` for ambiguous values, and declare platform-side processing as outside the tool's control.
+## Why the existing engine was reused unchanged
 
-## Processing Principles
+`ffmpeg.worker.ts` and its lossless/Smart Conversion command builders were not touched. Social plans are ordinary `OptimizationPlan`/`SmartConversionPlan` objects with a platform-aware output filename; the worker cannot tell the difference between a job started from the Optimizer page or the Social page. This avoids introducing any new, unverified FFmpeg command path.
 
-- Analyze local media before selecting a preparation path.
-- Preserve originals whenever they are already suitable.
-- Prefer stream copy or remux for compatible video.
-- Re-encode once only when justified and disclose it.
-- Do not upscale, change aspect ratio, or change frame rate unless the selected profile requires it.
-- Never accept raw FFmpeg commands from users.
-- Verify every output locally before enabling download.
+## Limitations (see `docs/STAGE_16_AUDIT.md` for the full list)
 
-## Privacy
+- Video only. Image preparation (including WhatsApp Profile Photo) is not implemented.
+- One platform and one destination at a time. No simultaneous multi-platform output and no batch queue.
+- No cropping, resizing, FPS conversion, duration trimming, or file-size limiting — only a warning when a vertical destination receives non-vertical source video.
+- No metadata policy controls (Preserve/Strip/Platform Safe).
+- Most platform numeric specs (exact aspect ratio, resolution, FPS, duration, file-size limits) are marked `UNKNOWN` because no accessible official source was verified for video (only Instagram's photo aspect-ratio rule and a WhatsApp media note were verified).
+- The tool cannot control or guarantee anything about platform-side processing after upload; every result surfaces a platform-reality disclaimer.
 
-A social optimizer must preserve the current local-only architecture. Media can pass only between the browser UI and same-origin workers; it must not be uploaded to third-party services.
+## Maintenance notes
 
-## Maintenance
-
-Platform rules change. Update profile rules only after reviewing official sources, updating `SOCIAL_MEDIA_SPECS.md`, adding fixtures, and executing the matching test-matrix row.
+- To add a real verified spec value, replace the corresponding `UNKNOWN` in the platform's `*Profile.ts` and cite the source in `docs/SOCIAL_MEDIA_SPECS.md`.
+- To add image support, implement a real image pipeline first, then replace the relevant `*ImageOptimizer.ts` stub — do not mark `supportsImageOptimization: true` in a profile until that pipeline is real and tested.
+- Any new destination must be added to the platform's `*Profile.ts` `destinations` map; the page's destination list is derived from that map automatically.
