@@ -1,0 +1,2 @@
+export const FFMPEG_WRAPPER_VERSION = '0.12.15'
+export const FFMPEG_CORE_VERSION = '0.12.10'

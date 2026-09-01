@@ -1,0 +1,1 @@
+This is an intentionally invalid video fixture for local file validation tests.

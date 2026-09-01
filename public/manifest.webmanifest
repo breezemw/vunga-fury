@@ -1,0 +1,17 @@
+{
+  "name": "VUNGA FURY",
+  "short_name": "VUNGA FURY",
+  "description": "Private, local browser video optimization.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#101413",
+  "theme_color": "#101413",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
