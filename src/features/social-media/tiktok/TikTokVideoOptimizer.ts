@@ -8,6 +8,8 @@ import {
 import { TIKTOK_PROFILE } from './TikTokProfile'
 import { validateTikTokSelection } from './TikTokValidator'
 
+export { imageProfile, prepareTikTokImage as prepareImage } from './TikTokImageOptimizer'
+
 export const profile = TIKTOK_PROFILE
 
 export const analyzeVideo: SocialPlatformModule['analyzeVideo'] = (

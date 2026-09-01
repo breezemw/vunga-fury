@@ -8,6 +8,8 @@ import {
 import { WHATSAPP_PROFILE } from './WhatsAppProfile'
 import { validateWhatsAppSelection } from './WhatsAppValidator'
 
+export { imageProfile, prepareWhatsAppImage as prepareImage } from './WhatsAppImageOptimizer'
+
 export const profile = WHATSAPP_PROFILE
 
 export const analyzeVideo: SocialPlatformModule['analyzeVideo'] = (

@@ -1,6 +1,31 @@
-import { createUnsupportedImageOptimizationResult } from '../common/imageOptimizerStub'
+import { analyzeImage } from '../images/imageAnalyzer'
+import { buildSocialImageComparison, type SocialImagePreparationResult } from '../images/imageComparison'
+import { evaluateSocialImage, buildSocialImageFileName, processSocialImage } from '../images/imageOptimizer'
+import { compareImagePixels } from '../images/imageVerifier'
+import { TIKTOK_IMAGE_PROFILE } from './TikTokImageProfile'
 
-/** TikTok image (cover/thumbnail) preparation is not implemented. */
-export function createTikTokImageOptimizationResult() {
-  return createUnsupportedImageOptimizationResult()
+export const imageProfile = TIKTOK_IMAGE_PROFILE
+
+export async function prepareTikTokImage(
+  file: File,
+  destinationKey: string,
+): Promise<SocialImagePreparationResult | null> {
+  const destination = TIKTOK_IMAGE_PROFILE[destinationKey]
+  if (!destination) return null
+  const metadata = await analyzeImage(file)
+  const decision = evaluateSocialImage(metadata, destination)
+  const result = await processSocialImage(file, decision, metadata)
+  const pixelComparison = await compareImagePixels(file, result.blob)
+  const comparison = buildSocialImageComparison(
+    metadata,
+    { fileSize: result.blob.size, height: result.height, width: result.width },
+    pixelComparison,
+    result.wasReencoded,
+    decision,
+  )
+  return {
+    comparison,
+    outputBlob: result.blob,
+    outputFileName: buildSocialImageFileName(file.name, 'tiktok'),
+  }
 }

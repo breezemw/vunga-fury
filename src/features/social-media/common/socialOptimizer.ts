@@ -1,8 +1,12 @@
+import type { SocialImagePreparationResult } from '../images/imageComparison'
+import type { ImageDestinationProfile } from '../images/imageProfiles'
 import type { VideoMetadata } from '../../video-analysis/videoTypes'
 import type {
   OptimizationPlan,
   SmartConversionPlan,
 } from '../../video-optimization/optimizationTypes'
+import type { VerificationStatus } from '../../video-verification/verificationTypes'
+import type { QualityResultCategory } from './qualityCategory'
 import type { SocialDestinationProfile, SocialPlatformProfile } from './platformTypes'
 
 export type SocialProcessingStatus =
@@ -128,16 +132,35 @@ export function getDestination(profile: SocialPlatformProfile, destinationKey: s
   return profile.destinations[destinationKey] ?? null
 }
 
+/**
+ * Maps the internal video decision/verification outcome onto the user-facing
+ * quality vocabulary. Verification evidence always takes precedence over the
+ * pre-processing plan: an unexpected re-encode is never reported as LOSSLESS.
+ */
+export function getVideoQualityCategory(
+  decisionStatus: SocialProcessingStatus,
+  verificationStatus: VerificationStatus | null,
+): QualityResultCategory {
+  if (verificationStatus === null || verificationStatus === 'failed' || verificationStatus === 'inconclusive') {
+    return 'NOT-VERIFIED'
+  }
+  if (decisionStatus === 'already-optimal' && verificationStatus === 'preserved') return 'QUALITY-PRESERVING'
+  if (verificationStatus === 'preserved') return 'LOSSLESS'
+  return 'PLATFORM-OPTIMIZED'
+}
+
 export type SocialValidationResult = { errors: string[]; warnings: string[] }
 
 /** Shape every platform's lazy-loaded module must expose. */
 export type SocialPlatformModule = {
   analyzeVideo: (metadata: VideoMetadata, destinationKey: string) => SocialDecision | null
+  imageProfile: Record<string, ImageDestinationProfile>
   planVideo: (
     fileName: string,
     metadata: VideoMetadata,
     destinationKey: string,
   ) => OptimizationPlan | SmartConversionPlan | null
+  prepareImage: (file: File, destinationKey: string) => Promise<SocialImagePreparationResult | null>
   profile: SocialPlatformProfile
   validate: (metadata: VideoMetadata, destinationKey: string) => SocialValidationResult
 }

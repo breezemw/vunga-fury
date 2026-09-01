@@ -7,6 +7,7 @@ test.describe('VUNGA FURY browser flows', () => {
       ['/optimizer', 'Processing workspace'],
       ['/analyzer', 'Technical video inspection'],
       ['/social', 'Prepare video for Instagram, Facebook, WhatsApp, and TikTok'],
+      ['/social-test-lab', 'Compare a real upload/download result'],
       ['/settings', 'Application preferences'],
       ['/about', 'A private upload-preparation tool'],
     ] as const
@@ -123,6 +124,33 @@ test.describe('VUNGA FURY browser flows', () => {
       page.getByRole('button', { name: 'DOWNLOAD OPTIMIZED VIDEO' }).click(),
     ])
     expect(download.suggestedFilename()).toBe('h264-30fps_instagram.mp4')
+  })
+
+  test('prepares a real local image for Instagram Feed Post through the Social page', async ({
+    page,
+  }) => {
+    await page.goto('/social')
+    await page
+      .locator('section')
+      .filter({ hasText: 'INSTAGRAM' })
+      .getByRole('button', { name: 'SELECT' })
+      .click()
+    await page.getByRole('button', { name: 'IMAGE' }).click()
+    await page.getByRole('button', { name: 'Feed Post' }).click()
+    await page
+      .locator('#social-image-input')
+      .setInputFiles('tests/fixtures/generated/photo-landscape.jpg')
+    await expect(page.getByText(/will be resized down once to 1080px/)).toBeVisible({
+      timeout: 10_000,
+    })
+    await page.getByRole('button', { name: 'PREPARE FOR INSTAGRAM' }).click()
+    await expect(page.getByText(/PIXEL DATA CHANGED/)).toBeVisible({ timeout: 15_000 })
+    await expect(page.getByRole('button', { name: 'DOWNLOAD OPTIMIZED VIDEO' })).toBeEnabled()
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('button', { name: 'DOWNLOAD OPTIMIZED VIDEO' }).click(),
+    ])
+    expect(download.suggestedFilename()).toBe('photo-landscape_instagram.jpg')
   })
 
   test('persists local settings and clears them on request', async ({ page }) => {

@@ -8,6 +8,8 @@ import {
 import { FACEBOOK_PROFILE } from './FacebookProfile'
 import { validateFacebookSelection } from './FacebookValidator'
 
+export { imageProfile, prepareFacebookImage as prepareImage } from './FacebookImageOptimizer'
+
 export const profile = FACEBOOK_PROFILE
 
 export const analyzeVideo: SocialPlatformModule['analyzeVideo'] = (

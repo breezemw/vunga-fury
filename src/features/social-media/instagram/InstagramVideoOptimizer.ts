@@ -8,6 +8,8 @@ import {
 import { INSTAGRAM_PROFILE } from './InstagramProfile'
 import { validateInstagramSelection } from './InstagramValidator'
 
+export { imageProfile, prepareInstagramImage as prepareImage } from './InstagramImageOptimizer'
+
 export const profile = INSTAGRAM_PROFILE
 
 export const analyzeVideo: SocialPlatformModule['analyzeVideo'] = (

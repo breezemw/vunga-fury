@@ -17,7 +17,7 @@ export function validateWhatsAppSelection(
   }
 
   if (!destination.supportsVideoOptimization) {
-    errors.push('This WhatsApp destination is for image media, which is not implemented.')
+    errors.push('This WhatsApp destination is for image media. Switch MEDIA TYPE to IMAGE to prepare it.')
     return { errors, warnings }
   }
 
