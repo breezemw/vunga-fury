@@ -64,6 +64,8 @@
 - Added integration coverage for real MP4/MOV container parsing and corrected `mp4a.6b` labeling from AAC to MP3.
 - Fixed the unit/integration test command so Vitest excludes Playwright E2E specifications.
 - Serialized stateful Playwright tests to prevent concurrent `vunga-fury-db` cleanup from racing persisted-settings assertions.
+- Fixed live GitHub Pages FFmpeg loading: Vite now bundles FFmpeg's nested class worker instead of deploying a worker with missing package-relative imports.
+- Completed the Stage 16 audit documents: `STAGE_16_AUDIT.md`, `SOCIAL_MEDIA_OPTIMIZER.md`, `SOCIAL_MEDIA_SPECS.md`, and `SOCIAL_MEDIA_TEST_MATRIX.md` accurately record that the requested social-platform/image/batch feature is not implemented.
 
 ## Tested
 
@@ -71,6 +73,7 @@
 - Stage 13 real-media integration tests passed for H.264/AAC MP4 and MOV, 60 FPS H.264, HEVC video detection, and MP3 audio detection.
 - Stage 13 E2E passed 13 Chromium desktop/mobile browser flows with 3 intended duplicate mobile FFmpeg-core workflow skips.
 - Real Chromium runs completed lossless H.264 remux with output verification and downloadable output, plus Smart Conversion with re-encode verification and downloadable output.
+- Live GitHub Pages testing with the real local H.264/AAC fixture confirmed the repaired engine moves from Preparing Video Engine to Video Engine Ready.
 - Stage 13 final quality suite passed: formatting, lint, type checking, 37 unit/integration assertions, production build, and 13 E2E flows.
 - `npm run typecheck` passed.
 - `npm run lint` passed.
@@ -130,6 +133,7 @@
 - Full FFmpeg core initialization did not complete within the 110-second production-preview browser test budget. The initial FFmpeg worker loading response works under CSP, but full processing under deployment headers remains unverified.
 - Real fixture coverage is deliberately small (roughly 126 KB to 239 KB). 50 MB, 100 MB, 250 MB, 500 MB, and 1 GB processing remains unmeasured.
 - Real HEVC and MP3-audio fixtures were container-analyzed, but end-to-end FFmpeg processing is currently verified only for the H.264/AAC MP4 fixture.
+- Stage 16 platform-specific image processing, social dashboard, platform selectors, independent platform modules, multi-platform outputs, batch queue, custom video mode, and metadata-policy controls are not implemented. See `STAGE_16_AUDIT.md` for requirement-by-requirement completion criteria.
 
 ## Not Completed
 
