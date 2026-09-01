@@ -144,7 +144,7 @@
 - Offline media processing: technically possible only after deliberate FFmpeg-core caching/storage testing. The current PWA intentionally avoids caching the large WASM core and all private media. Continue in another session.
 - Stage 16 image optimization, simultaneous multi-platform output, batch queue, custom video mode, and metadata policy controls: technically possible; requires a real image processing pipeline (not present) plus additional FFmpeg command work and tests. See `STAGE_16_AUDIT.md`.
 - Stage 16 Facebook/WhatsApp/TikTok real-fixture end-to-end runs: only Instagram Reel was run through the real FFmpeg engine in this session; the decision engine is shared and unit-tested but not independently E2E-verified per platform.
-- Stage 16 `/social` GitHub Pages deployment: implemented and locally tested, but not yet rebuilt/redeployed to the live `gh-pages` site as part of this session.
+- Stage 16 `/social` GitHub Pages deployment: implemented, deployed to the live `gh-pages` site, and verified there with a real Instagram Reel run (engine load, processing, "VIDEO STREAM PRESERVED", correct `h264-30fps_instagram.mp4` output filename). A live download-click event could not be captured through the interactive browser automation tool used for this verification (likely a tooling limitation, not an app defect, since the equivalent automated Playwright E2E test captures the download successfully).
 
 ## Next Session
 

@@ -55,4 +55,4 @@ No local tool can control server-side processing by Instagram, Facebook, WhatsAp
 - Public site: https://breezemw.github.io/vunga-fury/
 - Deployment: GitHub Pages from the static `gh-pages` branch.
 
-The `/social` feature has not yet been deployed to the live Pages site as of this audit; deployment must be repeated (rebuild with `VITE_BASE_PATH=/vunga-fury/`, push to `gh-pages`) and the live site re-verified before this feature can be considered live.
+The `/social` feature has been deployed to the live Pages site and verified there: Instagram was selected, the Reel destination was chosen, the FFmpeg engine loaded, the real `h264-30fps.mp4` fixture was processed, verification reported "VIDEO STREAM PRESERVED", and the result summary showed the correct platform-suffixed output filename `h264-30fps_instagram.mp4`.
