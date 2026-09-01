@@ -53,7 +53,7 @@ VUNGA FURY does not and will not guarantee that an upload destination avoids ser
 
 ## Deployment
 
-The repository includes a GitHub Pages workflow. Push the `main` branch, then enable Pages with GitHub Actions as the source. The deployment workflow builds with the correct project base path and includes an SPA fallback.
+The public site is deployed at https://breezemw.github.io/vunga-fury/. GitHub Pages serves the `gh-pages` branch, which contains the production `dist/` artifact built with the correct project base path and SPA fallback.
 
 ```bash
 npm ci
@@ -63,8 +63,12 @@ npm run test
 npm run build
 git add .
 git commit -m "Deploy VUNGA FURY"
+VITE_BASE_PATH=/vunga-fury/ npm run build
+cp dist/index.html dist/404.html
 git push -u origin main
 ```
+
+To update the live site, publish the rebuilt `dist/` contents to the `gh-pages` branch, then GitHub Pages will rebuild automatically. Custom domains are configured in the repository Pages settings after DNS is pointed at GitHub Pages.
 
 ## License
 

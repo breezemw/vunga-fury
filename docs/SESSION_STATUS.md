@@ -164,7 +164,7 @@ npm run build
 git push origin main
 ```
 
-The `Deploy GitHub Pages` workflow builds the static site using the Pages base path and deploys `dist/`. Custom domains are configured in the repository Pages settings after the initial deployment succeeds.
+The public source repository is https://github.com/breezemw/vunga-fury. GitHub Pages is configured to deploy the static `gh-pages` branch at https://breezemw.github.io/vunga-fury/. The branch contains the production build made with `VITE_BASE_PATH=/vunga-fury/` and an `index.html`-based `404.html` SPA fallback. Custom domains are configured in the repository Pages settings after DNS is pointed at GitHub Pages.
 
 ## Final Architecture
 
@@ -173,6 +173,12 @@ The `Deploy GitHub Pages` workflow builds the static site using the Pages base p
 - FFmpeg.wasm: lazy-loaded single-thread local engine performs fixed stream-copy or Smart Conversion commands; no user command input is accepted.
 - IndexedDB: `vunga-fury-db` stores only preferences and metadata-only history, never videos.
 - Local processing/download: the original `File` is mounted locally in WORKERFS, output is verified locally, and only then is a local Blob download enabled.
+
+## Final Audit
+
+- The release is functionally verified in Chromium for the documented H.264/AAC MP4 lossless and Smart Conversion flows, including local output verification and download initiation.
+- The public GitHub Pages site is building from the `gh-pages` branch. Deployment status must be checked at the published URL before treating it as live.
+- This is not a 100% cross-device certification. The Not Completed and Known Limitations sections name every remaining validation gap.
 
 ## Blocked
 
